@@ -1,0 +1,56 @@
+http:
+  port: 8080
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  api:
+    host: localhost
+    paths: '/ip'
+  order:
+    host: localhost
+    paths: 'apis/'order-api 
+  product:
+    host: localhost
+    paths: 'apis/products-api'
+serviceEndpoints:
+  httpbin:
+    url: 'https://httpbin.org'
+  order:
+    url: 'http://localhost:7777'
+  product:
+    url: 'http://localhost:7778'
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+pipelines:
+  default:
+    apiEndpoints:
+      - api
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: httpbin 
+              changeOrigin: true
+    default-1:
+      apiEndpoints:
+        - order
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: order
+              changeOrigin: true
+    default-2:
+      apiEndpoints:
+        - product
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: product
+              changeOrigin: true
