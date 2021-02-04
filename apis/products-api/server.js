@@ -5,6 +5,7 @@ const morgan = require("morgan");
 require('dotenv').config();
 
 const { productModel } = require("./models/ProductModel");
+const {producer} = require('./utils/Kafka');
 
 require('./utils/Database');
 require('./utils/Kafka');
@@ -20,7 +21,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-//GET ALL PRODUCTS
+//Keeping things simple without routes and controllers.
 //{{URL}}:
 app.get('/api/products',(req,res) => {
     try {
@@ -92,6 +93,7 @@ app.get('/api/product', (req,res) => {
     }
 });
 
+
 app.post('/add-to-cart',(req,res) => {
     try{
         const id = req.body.id;
@@ -115,7 +117,23 @@ app.post('/add-to-cart',(req,res) => {
                 });
             }
 
-            //produce a kafka topic named 'add-to-cart'
+            //since there is no authentication here, simulate this to be user id 1, if you want, you can skip adding carts to database for not authenticated users
+            const user_id = 1;
+
+            //produce a kafka topic named 'add-to-cart'..
+            const payload = [{
+                topic : 'product-service',
+                messages : JSON.stringify({
+                    product,
+                    type : 'ADD-TO-CART',
+                    user_id
+                })
+            }];
+
+            producer.send(payload,(err,data) => {
+                //will be logging this
+                console.log(err);
+            });
 
             return res.status(201).json({
                 success: true,

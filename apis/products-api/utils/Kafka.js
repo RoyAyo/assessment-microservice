@@ -16,4 +16,4 @@ producer.on('error', function(err) {
     //probably log it to a file somewhere or a monitoring tool
 });
 
-module.exports = producer;
+module.exports.producer = producer;

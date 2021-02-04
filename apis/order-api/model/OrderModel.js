@@ -4,12 +4,16 @@ const orderSchema = new Schema({
     user_id : {
         type : Types.ObjectId
     },
-    checkOut : [
+    cart : [
         {
             _id : false,
+            type : Types.ObjectId,
             productName : String,
             productPrice : Number,
-            quantity : Number
+            quantity : {
+                type : Number,
+                default : 1
+            }
         }
     ]
 });
