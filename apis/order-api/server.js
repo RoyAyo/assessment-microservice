@@ -5,7 +5,7 @@ const morgan = require("morgan");
 require('dotenv').config();
 
 require('./utils/Database');
-// require('./utils/Kafka');
+require('./utils/Kafka');
 
 const {orderModel} = require('./model/OrderModel');
 
