@@ -158,7 +158,7 @@ app.post('/add-to-cart/:user_id',(req,res) => {
                 });
             }
 
-            //produce a kafka topic named 'add-to-cart'..
+            //send to consumers subscribed to the product-service topic, a payload of type 'add-to-cart'..
             const payload = [{
                  topic : 'product-service',
                  messages : JSON.stringify({
