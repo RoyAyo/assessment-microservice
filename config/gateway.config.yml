@@ -1,4 +1,5 @@
 http:
+  hostname: localhost
   port: 8080
 admin:
   port: 9876
@@ -9,17 +10,17 @@ apiEndpoints:
     paths: '/ip'
   order:
     host: localhost
-    paths: 'apis/'order-api 
+    paths: ['/api/orders','/api/orders/*']
   product:
     host: localhost
-    paths: 'apis/products-api'
+    paths: ['/api/products',,'/api/products/*']
 serviceEndpoints:
   httpbin:
     url: 'https://httpbin.org'
-  order:
-    url: 'http://localhost:7777'
-  product:
+  orderService:
     url: 'http://localhost:7778'
+  productService:
+    url: 'http://localhost:7777'
 policies:
   - basic-auth
   - cors
@@ -38,19 +39,25 @@ pipelines:
           - action:
               serviceEndpoint: httpbin 
               changeOrigin: true
-    default-1:
-      apiEndpoints:
-        - order
+  orderPipeline:
+    apiEndpoints:
+      - order
     policies:
       - proxy:
           - action:
-              serviceEndpoint: order
+              serviceEndpoint: orderService
+              ignorePath: false
+              prependPath: true
+              stripPath: true
               changeOrigin: true
-    default-2:
-      apiEndpoints:
-        - product
+  prouctPipeline:
+    apiEndpoints:
+      - product
     policies:
       - proxy:
           - action:
-              serviceEndpoint: product
+              serviceEndpoint: productService
+              ignorePath: false
+              prependPath: true
+              stripPath: true
               changeOrigin: true

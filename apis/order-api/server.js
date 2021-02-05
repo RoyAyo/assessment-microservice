@@ -2,7 +2,6 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const cors = require('cors');
 const morgan = require("morgan");
-const { app } = require("../products-api/server");
 require('dotenv').config();
 
 require('./utils/Database');
@@ -13,7 +12,7 @@ const {orderModel} = require('./model/OrderModel');
 const PORT = process.env.PORT || 8080;
 
 //app setup
-app = express();
+const app = express();
 app.use(morgan('tiny'));
 app.use(cors());
 app.use(bodyParser.urlencoded({
@@ -21,9 +20,10 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.listen(PORT, () => {
-    console.log(`connected to port ${PORT}`);
-});
+app.get('/',(req,res) => {
+    console.log('order working');
+    res.send('hello order')
+})
 
 //endpoints
 app.get('/carts/user/:id', (req,res) => {
@@ -95,5 +95,8 @@ app.post('/order/user/:id', () => {
     });
 });
 
+app.listen(PORT, () => {
+    console.log(`connected to port ${PORT}`);
+});
 
 module.exports.app = app;
