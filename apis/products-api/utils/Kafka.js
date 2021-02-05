@@ -3,9 +3,15 @@ require('dotenv').config()
 
 const Producer = kafka.Producer;
 const client = new kafka.KafkaClient(process.env.KafkaClient)
-const producer = new Producer(client);
 
-console.log('I dey here')
+const topics = [{topic:'product-service',partitions:1,replicationFactor:1}]
+
+client.createTopics(topics,(err,res) => {
+    console.log(err)
+    console.log(res)
+});
+
+const producer = new Producer(client);
 
 producer.on('ready', () => {
     console.log('producer ready successfully');
