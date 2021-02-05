@@ -36,7 +36,8 @@ app.get('/carts/user/:id', (req,res) => {
             if(!user || user.cart.length === 0){
                 return res.json({
                     success : true,
-                    data : []
+                    data : [],
+                    message : 'User does not exist or has no cart'
                 });
             }
             
@@ -60,13 +61,14 @@ app.get('/carts/user/:id', (req,res) => {
     }
 });
 
+
 app.post('/order/user/:id', () => {
     const user_id = req.params.id;
 
     orderModel.findOne({user_id}).then(user => {
         //check if user has ever added to cart or if user cart is empty
         if(!user || user.checkOut.length === 0){
-            return res.json({
+            return res.status(400).json({
                 success : false,
                 message : 'You cart is empty',
                 error: 'Your cart needs to have at least one item'
@@ -75,7 +77,7 @@ app.post('/order/user/:id', () => {
         
         //send asynchronously to a payment service which sends to a shipment service if there is one to finalize which can send back to clear cart if successfull...
         
-        //assume all is successful.
+        //assume all is successful., reset the cart back to empty.
         user.cart = []
         user.save().then(d => {
             return res.status(201).json({
@@ -83,8 +85,12 @@ app.post('/order/user/:id', () => {
                 msg : 'order finalized'
             });
         }).catch(e => {
-
-        })
+            return res.status(400).json({
+                success : false,
+                message : 'Unable to Process users cart',
+                error : e.message
+            });
+        });
 
     }).catch(e => {
         return res.status(422).json({

@@ -21,14 +21,49 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.get('/',(req,res) => {
-    console.log('product working');
-    res.send('hello product')
+//add fake test-products
+app.get('/add-fake-products', (req,res) => {
+    
+    const products = [
+        {
+            productName : 'Cap',
+            price : 1000,
+            category : 'Fashion'
+        },
+        {
+            productName : 'Chair',
+            price : 1000,
+            category : 'Household'
+        },{
+            productName : 'Books',
+            price : 1000,
+            category : 'Education'
+        },{
+            productName : 'Shirt',
+            price : 1000,
+            category : 'Fashion'
+        },{
+            productName : 'Heels',
+            price : 1000,
+            category : 'Fashion'
+        },{
+            productName : 'AC',
+            price : 1000,
+            category : 'rlectronics'
+        },
+    ]
+
+    productModel.insertMany(products).then(d => {
+        res.send('Product added');
+    }).catch(e => {
+        res.send('Unable to add');
+    });
+
 });
 
+
 //Keeping things simple without routes and controllers.
-//{{URL}}:
-app.get('/api/products',(req,res) => {
+app.get('/',(req,res) => {
     try {
         
         productModel.find({}).then(products => {
@@ -55,17 +90,17 @@ app.get('/api/products',(req,res) => {
 });
 
 //GET ONE PRODUCT BY ID
-app.get('/api/product', (req,res) => {
+app.get('/product/:id', (req,res) => {
     try {
         
-        const id = req.body.id;
+        const id = req.params.id;
 
         if(id ===  undefined){
             return res.status(400).json({
                 success : false,
                 message : 'No Product Id to fetch provided',
-                error : e.message
-            })
+                error : 'No product Id specified'
+            });
         }
 
         productModel.findById(id).then(product => {

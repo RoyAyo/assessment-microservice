@@ -1,13 +1,13 @@
-const { Schema, model, Types } = require('mongoose');
+const { Schema, model, Types, Mongoose } = require('mongoose');
 
 const orderSchema = new Schema({
     user_id : {
-        type : Types.ObjectId
+        type : Types.ObjectId,
+        default : Mongoose.Types.ObjectId('601d1714ab5ea0388420590d')
     },
     cart : [
         {
             _id : false,
-            type : Types.ObjectId,
             productName : String,
             productPrice : Number,
             quantity : {
