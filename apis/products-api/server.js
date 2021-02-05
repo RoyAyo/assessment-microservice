@@ -134,16 +134,17 @@ app.get('/product/:id', (req,res) => {
 });
 
 
-app.post('/add-to-cart',(req,res) => {
+app.post('/add-to-cart/:user_id',(req,res) => {
     try{
         const id = req.body.id;
+	const user_id = req.params.user_id;
 
         //ensure an id is sent to the body
         if(id ===  undefined){
             return res.status(400).json({
                 success : false,
                 message : 'No Product Id to fetch provided',
-                error : e.message
+                error : 'Id is undefined'
             })
         }
 
@@ -156,9 +157,6 @@ app.post('/add-to-cart',(req,res) => {
                     error : 'Invalid Id provided'
                 });
             }
-
-            //since there is no authentication here, simulate this to be user id 1, if you want, you can skip adding carts to database for not authenticated users
-            const user_id = 1;
 
             //produce a kafka topic named 'add-to-cart'..
             const payload = [{
@@ -179,7 +177,13 @@ app.post('/add-to-cart',(req,res) => {
                 success: true,
                 message : 'Added to cart'
             });
-        })
+        }).catch(e => {
+		return res.status(422).json({
+			success : false,
+			message : 'Unable to process id',
+			error : e.message
+		})
+	})
     }catch(e){
         return res.status(500).json({
             success : false,

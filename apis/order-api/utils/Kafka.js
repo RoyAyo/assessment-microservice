@@ -22,17 +22,16 @@ consumer.on('message',async (message) => {
     console.log(message);
 
     const data = JSON.parse(message.value);
-
-    const user_id = data.user_id
     
+    const user_id = data.user_id;
+
     if(data.type === 'ADD-TO-CART'){
         orderModel.findOne({user_id}).then(user => {
             if(!user){
                 const newOrder = {
-                    user_id,
                     cart : [data.product]
                 };
-                const order = new OrderModel(newOrder)
+                const order = new orderModel(newOrder)
                 return order.save().catch(e => {
                     console.log(e.message);
                 });
@@ -43,7 +42,9 @@ consumer.on('message',async (message) => {
                 console.log(e.message);
             });
 
-        });
+        }).catch(e => {
+		console.log(e.message);
+	});
     }
 });
 
